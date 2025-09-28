@@ -1,8 +1,11 @@
+'use client';
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Play, Users, Database, Zap, Globe, Microscope, ArrowRight, CircleCheck as CheckCircle, AArrowDown as DNA } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const features = [
   {
@@ -36,14 +39,14 @@ const useCases = [
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="border-b bg-white/80 backdrop-blur-sm">
+      <nav className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
               <DNA className="h-8 w-8 text-blue-600" />
-              <span className="text-2xl font-bold text-gray-900">EDeepNA</span>
+              <span className="text-2xl font-bold text-primary">EDeepNA</span>
             </div>
             <div className="flex items-center space-x-4">
               <Link href="#about">
@@ -52,6 +55,7 @@ export default function HomePage() {
               <Link href="/login">
                 <Button>Get Started</Button>
               </Link>
+              <ThemeToggle />
             </div>
           </div>
         </div>
@@ -63,11 +67,11 @@ export default function HomePage() {
           <Badge variant="outline" className="mb-6">
             Deep-Sea eDNA Analysis Platform
           </Badge>
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+          <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
             Discover Marine
             <span className="block text-blue-600">Biodiversity</span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+          <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
             Advanced bioinformatics platform for environmental DNA analysis, 
             enabling marine biologists to uncover novel species and understand 
             deep-sea ecosystems through cutting-edge computational tools.
@@ -89,28 +93,28 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-secondary">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               Advanced Analysis Capabilities
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Comprehensive tools designed specifically for marine eDNA research
             </p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
-              <Card key={index} className="text-center border-none shadow-lg hover:shadow-xl transition-shadow">
+              <Card key={index} className="text-center">
                 <CardHeader>
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <feature.icon className="h-6 w-6 text-blue-600" />
+                  <div className="w-12 h-12 bg-accent rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <feature.icon className="h-6 w-6 text-accent-foreground" />
                   </div>
                   <CardTitle className="text-xl">{feature.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="text-gray-600">
+                  <CardDescription>
                     {feature.description}
                   </CardDescription>
                 </CardContent>
@@ -125,10 +129,10 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
                 Revolutionizing Marine Biology Research
               </h2>
-              <p className="text-lg text-gray-600 mb-6">
+              <p className="text-lg text-muted-foreground mb-6">
                 EDeepNA combines state-of-the-art bioinformatics algorithms with 
                 intuitive interfaces to help marine biologists analyze environmental 
                 DNA samples from the deep sea. Our platform enables the discovery 
@@ -140,7 +144,7 @@ export default function HomePage() {
                 {useCases.map((useCase, index) => (
                   <div key={index} className="flex items-center space-x-3">
                     <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                    <span className="text-gray-700">{useCase}</span>
+                    <span className="text-muted-foreground">{useCase}</span>
                   </div>
                 ))}
               </div>
@@ -174,12 +178,12 @@ export default function HomePage() {
                       <span className="text-sm">Clustering Analysis</span>
                     </div>
                     <div className="flex items-center space-x-3">
-                      <div className="h-4 w-4 bg-gray-300 rounded-full" />
-                      <span className="text-sm text-gray-400">Taxonomic Classification</span>
+                      <div className="h-4 w-4 bg-muted rounded-full" />
+                      <span className="text-sm text-muted-foreground">Taxonomic Classification</span>
                     </div>
                   </div>
                   <div className="pt-4 border-t">
-                    <div className="text-xs text-gray-500 mb-2">Novel clusters found</div>
+                    <div className="text-xs text-muted-foreground mb-2">Novel clusters found</div>
                     <div className="text-2xl font-bold text-blue-600">267</div>
                   </div>
                 </div>
@@ -190,17 +194,17 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
+      <footer className="bg-card border-t py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="flex items-center justify-center space-x-2 mb-4">
               <DNA className="h-8 w-8 text-blue-400" />
               <span className="text-2xl font-bold">EDeepNA</span>
             </div>
-            <p className="text-gray-400 mb-4">
+            <p className="text-muted-foreground mb-4">
               Advancing marine biodiversity research through environmental DNA analysis
             </p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted-foreground">
               © 2024 EDeepNA Project. All rights reserved. | Restricted to verified scientists only.
             </p>
           </div>

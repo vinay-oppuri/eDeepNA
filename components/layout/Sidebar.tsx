@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { 
   Globe, 
   FolderOpen, 
@@ -147,8 +148,8 @@ export function Sidebar({
         )}
       </ScrollArea>
 
-      {/* Settings */}
-      <div className="p-4 border-t">
+      {/* Footer */}
+      <div className="p-4 border-t space-y-2">
         <Button
           variant="ghost"
           className="w-full justify-start"
@@ -157,6 +158,9 @@ export function Sidebar({
           <Settings className="h-4 w-4 mr-2" />
           {!collapsed && "Settings"}
         </Button>
+        <div className={cn("flex", collapsed ? "justify-center" : "justify-start")}>
+          <ThemeToggle />
+        </div>
       </div>
     </div>
   );
