@@ -11,6 +11,8 @@ import { ReviewPanel } from '@/components/dashboard/ReviewPanel';
 import { Chatbot } from '@/components/dashboard/Chatbot';
 import { UploadDialog } from '@/components/upload/UploadDialog';
 import { Loader as Loader2, LogOut, Bell, Settings } from 'lucide-react';
+import { Datasets } from '@/components/dashboard/Datasets';
+
 const mockDatasets = [
   { id: 'ds1', name: 'DeepSea_Pacific_2024', createdAt: new Date('2024-01-15') },
   { id: 'ds2', name: 'Arctic_Samples_2024', createdAt: new Date('2024-01-10') },
@@ -27,12 +29,16 @@ export default function DashboardPage() {
     setTimeout(() => setLoading(false), 1000);
   }, []);
 
+  const handleDatasetClick = (datasetId: string) => {
+    setCurrentView(`dataset-${datasetId}`);
+  };
+
   const renderCurrentView = () => {
     switch (currentView) {
       case 'global-overview':
         return <GlobalOverview />;
       case 'datasets':
-        return <div>Dataset overview would go here</div>;
+        return <Datasets datasets={datasets} onDatasetClick={handleDatasetClick} />;
       case 'queries':
         return <QueryAnalysis />;
       case 'review':
@@ -98,16 +104,29 @@ export default function DashboardPage() {
         </header>
 
         {/* Main Content Area */}
-        <div className="flex-1 flex overflow-hidden">
-          <main className="flex-1 overflow-auto p-6">
-            {renderCurrentView()}
-          </main>
-
-          {/* Chatbot Panel */}
-          <aside className="w-80 border-l bg-card p-4 overflow-hidden">
-            <Chatbot />
-          </aside>
-        </div>
+        {currentView.startsWith('dataset-') ? (
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <main className="flex-1 overflow-auto p-6">
+              {renderCurrentView()}
+            </main>
+            <div className="border-t">
+              <Chatbot showIntroMessage={false} />
+            </div>
+          </div>
+        ) : currentView === 'datasets' ? (
+            <main className="flex-1 overflow-auto p-6">
+                {renderCurrentView()}
+            </main>
+        ) : (
+          <div className="flex-1 flex overflow-hidden">
+            <main className="flex-1 overflow-auto p-6">
+              {renderCurrentView()}
+            </main>
+            <aside className="w-80 border-l bg-card p-4 overflow-hidden">
+              <Chatbot />
+            </aside>
+          </div>
+        )}
       </div>
 
       {/* Upload Dialogs */}

@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Send, AArrowDown as DNA, TriangleAlert as AlertTriangle, CircleCheck as CheckCircle } from 'lucide-react';
+import { Send, AArrowDown as DNA, TriangleAlert as AlertTriangle, CircleCheck as CheckCircle, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface QueryResult {
   id: string;
@@ -49,13 +49,20 @@ const mockQueryResults: QueryResult[] = [
   }
 ];
 
+const mockAlignment = {
+  query: 'ATCGATCGATCG',
+  match: 'ATCGTTCGATCG',
+  alignment: '||| || |||||',
+};
+
 export function QueryAnalysis() {
   const [newQuery, setNewQuery] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [selectedQuery, setSelectedQuery] = useState<string | null>(null);
 
   const handleSubmitQuery = async () => {
     if (!newQuery.trim()) return;
-    
+
     setIsAnalyzing(true);
     // Simulate analysis
     setTimeout(() => {
@@ -78,6 +85,10 @@ export function QueryAnalysis() {
     if (score > 70) return <Badge variant="destructive">Highly Novel</Badge>;
     if (score > 40) return <Badge variant="secondary">Moderately Novel</Badge>;
     return <Badge variant="default">Known</Badge>;
+  };
+
+  const toggleAnalysis = (queryId: string) => {
+    setSelectedQuery(prev => (prev === queryId ? null : queryId));
   };
 
   return (
@@ -107,7 +118,7 @@ export function QueryAnalysis() {
               onChange={(e) => setNewQuery(e.target.value)}
               className="flex-1"
             />
-            <Button 
+            <Button
               onClick={handleSubmitQuery}
               disabled={!newQuery.trim() || isAnalyzing}
             >
@@ -135,7 +146,7 @@ export function QueryAnalysis() {
                     <div className="flex-shrink-0">
                       {getResultIcon(result.noveltyScore)}
                     </div>
-                    
+
                     <div className="flex-1 space-y-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
@@ -151,70 +162,87 @@ export function QueryAnalysis() {
                         {result.sequence}...
                       </div>
 
-                      <div className="grid gap-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="font-medium">Similarity:</span>
-                          <span className={
-                            result.similarity > 90 ? 'text-green-600' :
-                            result.similarity > 70 ? 'text-blue-600' :
-                            result.similarity > 40 ? 'text-orange-600' :
-                            'text-red-600'
-                          }>
-                            {result.similarity}%
-                          </span>
+                      <div className="pt-4 space-y-4">
+                        <h4 className="font-semibold">Detailed Analysis</h4>
+                        <div className="grid gap-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="font-medium">Similarity:</span>
+                            <span className={
+                              result.similarity > 90 ? 'text-green-600' :
+                                result.similarity > 70 ? 'text-blue-600' :
+                                  result.similarity > 40 ? 'text-orange-600' :
+                                    'text-red-600'
+                            }>
+                              {result.similarity}%
+                            </span>
+                          </div>
+
+                          <div className="flex justify-between">
+                            <span className="font-medium">Novelty Score:</span>
+                            <span className={
+                              result.noveltyScore > 70 ? 'text-red-600' :
+                                result.noveltyScore > 40 ? 'text-orange-600' :
+                                  'text-green-600'
+                            }>
+                              {result.noveltyScore}%
+                            </span>
+                          </div>
+
+                          {result.dbMatch && (
+                            <div>
+                              <span className="font-medium">Best Match:</span>
+                              <p className="text-muted-foreground mt-1">{result.dbMatch}</p>
+                            </div>
+                          )}
+
+                          {result.taxonomy && (
+                            <div>
+                              <span className="font-medium">Taxonomy:</span>
+                              <p className="text-muted-foreground mt-1 text-xs">{result.taxonomy}</p>
+                            </div>
+                          )}
+
+                          {!result.dbMatch && (
+                            <div className="p-2 bg-orange-50 border-l-4 border-orange-400">
+                              <p className="text-orange-800 text-xs">
+                                <AlertTriangle className="h-3 w-3 inline mr-1" />
+                                No significant database matches found. This may represent a novel sequence.
+                              </p>
+                            </div>
+                          )}
                         </div>
-                        
-                        <div className="flex justify-between">
-                          <span className="font-medium">Novelty Score:</span>
-                          <span className={
-                            result.noveltyScore > 70 ? 'text-red-600' :
-                            result.noveltyScore > 40 ? 'text-orange-600' :
-                            'text-green-600'
-                          }>
-                            {result.noveltyScore}%
-                          </span>
-                        </div>
 
-                        {result.dbMatch && (
-                          <div>
-                            <span className="font-medium">Best Match:</span>
-                            <p className="text-muted-foreground mt-1">{result.dbMatch}</p>
-                          </div>
-                        )}
+                        <Separator />
 
-                        {result.taxonomy && (
-                          <div>
-                            <span className="font-medium">Taxonomy:</span>
-                            <p className="text-muted-foreground mt-1 text-xs">{result.taxonomy}</p>
-                          </div>
-                        )}
-
-                        {!result.dbMatch && (
-                          <div className="p-2 bg-orange-50 border-l-4 border-orange-400">
-                            <p className="text-orange-800 text-xs">
-                              <AlertTriangle className="h-3 w-3 inline mr-1" />
-                              No significant database matches found. This may represent a novel sequence.
-                            </p>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="flex space-x-2">
-                        <Button size="sm" variant="outline">
-                          View Alignment
-                        </Button>
-                        <Button size="sm" variant="outline">
-                          Export Result
-                        </Button>
-                        {result.noveltyScore > 70 && (
-                          <Button size="sm" variant="secondary">
-                            Flag for Review
+                        <div className="flex space-x-2">
+                          <Button size="sm" variant="outline" onClick={() => toggleAnalysis(result.id)}>
+                            {selectedQuery === result.id ? <ChevronUp className="h-4 w-4 mr-2" /> : <ChevronDown className="h-4 w-4 mr-2" />}
+                            {selectedQuery === result.id ? 'Hide Alignment' : 'View Alignment'}
                           </Button>
+                          <Button size="sm" variant="outline">
+                            Export Result
+                          </Button>
+                          {result.noveltyScore > 70 && (
+                            <Button size="sm" variant="secondary">
+                              Flag for Review
+                            </Button>
+                          )}
+                        </div>
+
+                        {selectedQuery === result.id && (
+                          <>
+                            <h4 className="font-semibold">Alignment</h4>
+                            <div className="font-mono bg-muted/50 p-3 rounded">
+                              <p>Query: {mockAlignment.query}</p>
+                              <p>       {mockAlignment.alignment}</p>
+                              <p>Match: {mockAlignment.match}</p>
+                            </div>
+                          </>
                         )}
                       </div>
                     </div>
                   </div>
-                  
+
                   {index < mockQueryResults.length - 1 && (
                     <Separator className="my-4" />
                   )}

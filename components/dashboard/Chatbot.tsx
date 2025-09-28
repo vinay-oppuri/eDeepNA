@@ -23,15 +23,20 @@ const mockResponses = [
   "Based on your query, I've identified several interesting patterns in the taxonomic data. Would you like me to generate a visualization?",
 ];
 
-export function Chatbot() {
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: '1',
-      type: 'bot',
-      content: "Hello! I'm your EDeepNA analysis assistant. I can help you explore your eDNA datasets, find specific clusters, analyze taxonomic patterns, and answer questions about your results. What would you like to know?",
-      timestamp: new Date()
+export function Chatbot({ showIntroMessage = true }: { showIntroMessage?: boolean }) {
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    if (showIntroMessage) {
+      return [
+        {
+          id: '1',
+          type: 'bot',
+          content: "Hello! I'm your EDeepNA analysis assistant. I can help you explore your eDNA datasets, find specific clusters, analyze taxonomic patterns, and answer questions about your results. What would you like to know?",
+          timestamp: new Date()
+        }
+      ];
     }
-  ]);
+    return [];
+  });
   const [newMessage, setNewMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -78,7 +83,7 @@ export function Chatbot() {
   }, [messages, isTyping]);
 
   return (
-    <Card className="h-[400px] flex flex-col">
+    <Card className={`flex flex-col ${messages.length > 0 ? 'h-[400px]' : ''}`}>
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center text-sm font-medium">
           <Bot className="h-4 w-4 mr-2" />
@@ -87,62 +92,64 @@ export function Chatbot() {
       </CardHeader>
       
       <CardContent className="flex-1 flex flex-col p-4">
-        <ScrollArea className="flex-1 pr-3 mb-4" ref={scrollAreaRef}>
-          <div className="space-y-4">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex items-start space-x-3 ${
-                  message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''
-                }`}
-              >
-                <Avatar className="w-8 h-8 flex-shrink-0">
-                  <div className={`w-full h-full flex items-center justify-center rounded-full ${
-                    message.type === 'user' 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'bg-muted text-muted-foreground'
-                  }`}>
-                    {message.type === 'user' ? (
-                      <User className="h-4 w-4" />
-                    ) : (
+        {messages.length > 0 && (
+          <ScrollArea className="flex-1 pr-3 mb-4" ref={scrollAreaRef}>
+            <div className="space-y-4">
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex items-start space-x-3 ${
+                    message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''
+                  }`}
+                >
+                  <Avatar className="w-8 h-8 flex-shrink-0">
+                    <div className={`w-full h-full flex items-center justify-center rounded-full ${
+                      message.type === 'user' 
+                        ? 'bg-primary text-primary-foreground' 
+                        : 'bg-muted text-muted-foreground'
+                    }`}>
+                      {message.type === 'user' ? (
+                        <User className="h-4 w-4" />
+                      ) : (
+                        <Bot className="h-4 w-4" />
+                      )}
+                    </div>
+                  </Avatar>
+                  
+                  <div className={`flex-1 ${message.type === 'user' ? 'text-right' : ''}`}>
+                    <div className={`inline-block p-3 rounded-lg max-w-[80%] ${
+                      message.type === 'user' 
+                        ? 'bg-primary text-primary-foreground' 
+                        : 'bg-muted'
+                    }`}>
+                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {message.timestamp.toLocaleTimeString()}
+                    </p>
+                  </div>
+                </div>
+              ))}
+              
+              {isTyping && (
+                <div className="flex items-start space-x-3">
+                  <Avatar className="w-8 h-8 flex-shrink-0">
+                    <div className="w-full h-full flex items-center justify-center rounded-full bg-muted text-muted-foreground">
                       <Bot className="h-4 w-4" />
-                    )}
-                  </div>
-                </Avatar>
-                
-                <div className={`flex-1 ${message.type === 'user' ? 'text-right' : ''}`}>
-                  <div className={`inline-block p-3 rounded-lg max-w-[80%] ${
-                    message.type === 'user' 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'bg-muted'
-                  }`}>
-                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {message.timestamp.toLocaleTimeString()}
-                  </p>
-                </div>
-              </div>
-            ))}
-            
-            {isTyping && (
-              <div className="flex items-start space-x-3">
-                <Avatar className="w-8 h-8 flex-shrink-0">
-                  <div className="w-full h-full flex items-center justify-center rounded-full bg-muted text-muted-foreground">
-                    <Bot className="h-4 w-4" />
-                  </div>
-                </Avatar>
-                <div className="bg-muted p-3 rounded-lg">
-                  <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-current rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                    <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    </div>
+                  </Avatar>
+                  <div className="bg-muted p-3 rounded-lg">
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-current rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                      <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
-        </ScrollArea>
+              )}
+            </div>
+          </ScrollArea>
+        )}
 
         <div className="flex space-x-2">
           <Input
