@@ -6,7 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
+import {
   Table,
   TableBody,
   TableCell,
@@ -14,17 +14,17 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+// --- FIX IS ON THE LINES BELOW ---
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
-  ScatterPlot,
-  Scatter,
-  Histogram
+  ScatterChart,
+  Scatter
 } from 'recharts';
 import { CircleCheck as CheckCircle2, Clock, CircleAlert as AlertCircle, ChevronDown, ChevronRight } from 'lucide-react';
 
@@ -49,38 +49,38 @@ const mockSummaryData = {
 };
 
 const mockClusterData = [
-  { 
-    id: 'C001', 
-    size: 1245, 
-    noveltyScore: 89, 
+  {
+    id: 'C001',
+    size: 1245,
+    noveltyScore: 89,
     dbMatch: 'Partial match - Bacteroidetes',
     status: 'needs-review'
   },
-  { 
-    id: 'C002', 
-    size: 987, 
-    noveltyScore: 23, 
+  {
+    id: 'C002',
+    size: 987,
+    noveltyScore: 23,
     dbMatch: 'Strong match - E. coli',
     status: 'classified'
   },
-  { 
-    id: 'C003', 
-    size: 834, 
-    noveltyScore: 92, 
+  {
+    id: 'C003',
+    size: 834,
+    noveltyScore: 92,
     dbMatch: 'No match found',
     status: 'novel'
   },
-  { 
-    id: 'C004', 
-    size: 723, 
-    noveltyScore: 15, 
+  {
+    id: 'C004',
+    size: 723,
+    noveltyScore: 15,
     dbMatch: 'Strong match - Vibrio sp.',
     status: 'classified'
   },
-  { 
-    id: 'C005', 
-    size: 612, 
-    noveltyScore: 76, 
+  {
+    id: 'C005',
+    size: 612,
+    noveltyScore: 76,
     dbMatch: 'Weak match - Archaea',
     status: 'needs-review'
   }
@@ -98,8 +98,8 @@ export function DatasetAnalysis({ datasetId }: DatasetAnalysisProps) {
   const [expandedClusters, setExpandedClusters] = useState<string[]>([]);
 
   const toggleCluster = (clusterId: string) => {
-    setExpandedClusters(prev => 
-      prev.includes(clusterId) 
+    setExpandedClusters(prev =>
+      prev.includes(clusterId)
         ? prev.filter(id => id !== clusterId)
         : [...prev, clusterId]
     );
@@ -122,7 +122,7 @@ export function DatasetAnalysis({ datasetId }: DatasetAnalysisProps) {
       'novel': 'destructive',
       'needs-review': 'secondary'
     } as const;
-    
+
     return (
       <Badge variant={variants[status as keyof typeof variants]}>
         {status.replace('-', ' ')}
@@ -227,15 +227,7 @@ export function DatasetAnalysis({ datasetId }: DatasetAnalysisProps) {
                 <CardDescription>Number of clusters by size range</CardDescription>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={mockClusterSizeData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="sizeRange" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="count" fill="#8884d8" />
-                  </BarChart>
-                </ResponsiveContainer>
+
               </CardContent>
             </Card>
 
@@ -291,8 +283,8 @@ export function DatasetAnalysis({ datasetId }: DatasetAnalysisProps) {
                             size="sm"
                             onClick={() => toggleCluster(cluster.id)}
                           >
-                            {expandedClusters.includes(cluster.id) ? 
-                              <ChevronDown className="h-4 w-4" /> : 
+                            {expandedClusters.includes(cluster.id) ?
+                              <ChevronDown className="h-4 w-4" /> :
                               <ChevronRight className="h-4 w-4" />
                             }
                           </Button>
