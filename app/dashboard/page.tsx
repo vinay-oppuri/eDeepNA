@@ -104,29 +104,17 @@ export default function DashboardPage() {
         </header>
 
         {/* Main Content Area */}
-        {currentView.startsWith('dataset-') ? (
-          <div className="flex-1 flex flex-col overflow-hidden">
-            <main className="flex-1 overflow-auto p-6">
-              {renderCurrentView()}
-            </main>
-            <div className="border-t">
-              <Chatbot showIntroMessage={false} />
-            </div>
-          </div>
-        ) : currentView === 'datasets' ? (
-            <main className="flex-1 overflow-auto p-6">
-                {renderCurrentView()}
-            </main>
-        ) : (
-          <div className="flex-1 flex overflow-hidden">
-            <main className="flex-1 overflow-auto p-6">
-              {renderCurrentView()}
-            </main>
+        <main className="flex-1 overflow-auto p-6">
+          {renderCurrentView()}
+        </main>
+
+        {currentView.startsWith('dataset-') && <Chatbot showIntroMessage={false} />}
+        {currentView !== 'datasets' && !currentView.startsWith('dataset-') && (
             <aside className="w-80 border-l bg-card p-4 overflow-hidden">
-              <Chatbot />
+                <Chatbot />
             </aside>
-          </div>
         )}
+
       </div>
 
       {/* Upload Dialogs */}

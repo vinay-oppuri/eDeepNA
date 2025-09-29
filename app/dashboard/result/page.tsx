@@ -5,7 +5,9 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Dna, CheckCircle, AlertTriangle, Download } from 'lucide-react';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
+import { PhylogeneticTree } from '@/components/dashboard/PhylogeneticTree';
 
 // Mock data for a single query result - in a real app this would be fetched based on an ID
 const mockResults: { [key: string]: any } = {
@@ -31,6 +33,7 @@ const mockResults: { [key: string]: any } = {
       bits: 350,
       eValue: 1e-90,
     },
+    phylogeneticTreeUrl: 'https://www.mobot.org/mobot/research/apweb/cladograms/Fig.1.Spermatophytes.gif',
   },
   Q002: {
     id: 'Q002',
@@ -52,6 +55,7 @@ const mockResults: { [key: string]: any } = {
       bits: 280,
       eValue: 1e-70,
     },
+    phylogeneticTreeUrl: 'https://www.researchgate.net/profile/Jonathan-Godfrey/publication/221915993/figure/fig2/AS:305538356957186@1449857442142/Phylogenetic-tree-of-vertebrate-species-This-tree-was-obtained-from-the-Tree-of-Life.png',
   },
   Q003: {
     id: 'Q003',
@@ -73,6 +77,29 @@ const mockResults: { [key: string]: any } = {
       bits: 400,
       eValue: 1e-100,
     },
+    phylogeneticTreeUrl: 'https://i.pinimg.com/originals/b5/03/75/b50375932454646f2852654313a0e68d.gif',
+  },
+  Q004: { // Placeholder for dynamically generated results
+    id: 'Q004',
+    sequence:
+      'AGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTAGCT',
+    similarity: 88.2,
+    dbMatch: 'Newly Discovered Bacterium',
+    taxonomy: 'Bacteria; Firmicutes',
+    noveltyScore: 75.0,
+    timestamp: new Date(),
+    length: 90,
+    gcContent: 52,
+    accession: 'N/A',
+    alignment: {
+      query: 'AGCTAGCTAGCTAGCTAG',
+      match: 'AGCTAGCTAGCTAGCTAG',
+      alignment: '||||||||||||||||||',
+      score: 190,
+      bits: 380,
+      eValue: 1e-95,
+    },
+    phylogeneticTreeUrl: 'https://www.researchgate.net/publication/338279951/figure/fig1/AS:842240963792896@1577817539523/A-phylogenetic-tree-of-Felis-based-on-37-mitochondrial-genomes-The-phylogenetic-tree.png',
   },
 };
 
@@ -88,11 +115,15 @@ const getResultIcon = (noveltyScore: number) => {
   return <Dna className="h-8 w-8 text-blue-500" />;
 };
 
-export default function QueryResultPage() {
+function QueryResultPageContent() {
   const router = useRouter();
-  const params = useParams();
-  const resultId = params.id as string;
-  const result = mockResults[resultId];
+  const searchParams = useSearchParams();
+  const resultId = searchParams.get('id');
+  const result = resultId ? mockResults[resultId] : null;
+
+  if (!resultId) {
+    return <div>Select a result to view details.</div>;
+  }
 
   if (!result) {
     return <div>Result not found</div>;
@@ -131,6 +162,13 @@ export default function QueryResultPage() {
           <Separator className="my-4" />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="md:col-span-2 space-y-6">
+              <h3 className="font-semibold text-lg">Phylogenetic Analysis</h3>
+              <Card>
+                <CardContent className="p-4">
+                  <PhylogeneticTree imageUrl={result.phylogeneticTreeUrl} />
+                </CardContent>
+              </Card>
+
               <h3 className="font-semibold text-lg">Sequence Alignment</h3>
               <Card className="bg-muted/50">
                 <CardContent className="p-4">
@@ -195,4 +233,13 @@ export default function QueryResultPage() {
       </Card>
     </div>
   );
+}
+
+// Wrap the component in Suspense to handle the initial render where searchParams are not yet available.
+export default function QueryResultPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <QueryResultPageContent />
+        </Suspense>
+    )
 }
