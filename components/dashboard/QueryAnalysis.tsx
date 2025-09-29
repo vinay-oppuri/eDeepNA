@@ -274,8 +274,10 @@ export function QueryAnalysis() {
           </CardContent>
           {isComplete && latestResultId && (
              <CardFooter>
-                <Link href={`/dashboard/result?id=${latestResultId}`} passHref className="w-full">
-                    <Button className="w-full">View Full Report <ArrowRight className="h-4 w-4 ml-2" /></Button>
+                <Link href={`/dashboard/result?id=${latestResultId}`}>
+                    <a className="w-full">
+                        <Button className="w-full">View Full Report <ArrowRight className="h-4 w-4 ml-2" /></Button>
+                    </a>
                 </Link>
             </CardFooter>
           )}
@@ -298,8 +300,8 @@ export function QueryAnalysis() {
                     <div className="flex-1 space-y-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
-                          <Link href={`/dashboard/result?id=${result.id}`} passHref>
-                             <span className="font-medium cursor-pointer hover:underline">{result.id}</span>
+                          <Link href={`/dashboard/result?id=${result.id}`}>
+                             <a className="font-medium cursor-pointer hover:underline">{result.id}</a>
                           </Link>
                           {getNoveltyBadge(result.noveltyScore)}
                         </div>
